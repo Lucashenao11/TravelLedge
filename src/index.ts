@@ -1,9 +1,24 @@
 import express, { Application } from 'express';
-import { infoCurso } from './infoCurso';
+import path from 'path';
+import loginRouter from './routes/login';
+import sequelize from './database';
 
 const app: Application = express();
 
-app.listen(3000, () => {
-    console.log('Server is running on port 3000');
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'pages', 'common', 'home.html'));
+});
+
+app.use('/', loginRouter);
+
+const PUERTO = process.env.PORT || 3000;
+
+sequelize.sync().then(() => {
+  app.listen(PUERTO, () => {
+    console.log('El servidor escucha en el puerto ' + PUERTO);
+  });
 });
 
