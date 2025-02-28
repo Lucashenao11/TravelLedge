@@ -1,0 +1,25 @@
+{
+  "name": "travelledge",
+  "version": "1.0.0",
+  "description": "An application made to register every purchase an employee makes outside the country.",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Lucashenao11/TravelLedge.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Lucashenao11/TravelLedge/issues"
+  },
+  "homepage": "https://github.com/Lucashenao11/TravelLedge#readme",
+  "dependencies": {
+    "express": "^4.21.2"
+  }
+}
