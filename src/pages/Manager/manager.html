@@ -14,25 +14,52 @@
         header {
             background-color: #333;
             color: #fff;
-            padding: 10px 0;
-            text-align: center;
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
         }
         header img {
             height: 50px;
         }
+        nav {
+            position: relative;
+        }
         nav ul {
             list-style: none;
             padding: 0;
+            margin: 0;
+            display: none;
             text-align: center;
             background-color: #444;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
         }
         nav ul li {
-            display: inline;
-            margin: 0 10px;
+            margin: 10px 0;
         }
         nav ul li a {
             color: #fff;
             text-decoration: none;
+            padding: 10px 20px;
+            display: block;
+        }
+        nav ul li a:hover {
+            background-color: #555;
+            border-radius: 5px;
+        }
+        .menu-button {
+            background-color: #333;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        .menu-button:hover {
+            background-color: #555;
         }
         .content {
             max-width: 800px;
@@ -40,16 +67,28 @@
             padding: 20px;
             background-color: #fff;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        .button {
+            padding: 10px 20px;
+            background-color: #333;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        .button:hover {
+            background-color: #555;
         }
     </style>
 </head>
 <body>
     <header>
         <img src="/src/pages/public/img/logo.png" alt="Logo">
-        <h1>TravelLedge</h1>
+        <button class="menu-button" onclick="toggleMenu()">Menu</button>
     </header>
     <nav>
-        <ul>
+        <ul id="menu">
             <li><a href="#">Inicio</a></li>
             <li><a href="#">Servicios</a></li>
             <li><a href="#">Contacto</a></li>
@@ -58,6 +97,21 @@
     </nav>
     <div class="content">
         <p>Bienvenido, manager</p>
+        <button class="button" onclick="showAlert()">Click me</button>
     </div>
+    <script>
+        function toggleMenu() {
+            const menu = document.getElementById('menu');
+            if (menu.style.display === 'block') {
+                menu.style.display = 'none';
+            } else {
+                menu.style.display = 'block';
+            }
+        }
+
+        function showAlert() {
+            alert('Button clicked!');
+        }
+    </script>
 </body>
 </html>
