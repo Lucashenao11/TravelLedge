@@ -6,6 +6,9 @@ class User extends Model {
   public username!: string;
   public password!: string;
   public role!: string;
+  public trip_start_date!: Date;
+  public trip_end_date!: Date;
+    balance: any;
 }
 
 User.init(
@@ -26,6 +29,14 @@ User.init(
     role: {
       type: new DataTypes.STRING(128),
       allowNull: false,
+    },
+    trip_start_date: {
+      type: DataTypes.DATEONLY,
+      allowNull: true,
+    },
+    trip_end_date: {
+      type: DataTypes.DATEONLY,
+      allowNull: true,
     },
   },
   {

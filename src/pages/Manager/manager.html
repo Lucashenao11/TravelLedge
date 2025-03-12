@@ -69,7 +69,38 @@
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             text-align: center;
         }
-        .button {
+        .employee-list {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: left;
+        }
+        .employee-list h2 {
+            text-align: center;
+        }
+        .employee-list ul {
+            list-style: none;
+            padding: 0;
+        }
+        .employee-list ul li {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+        .form-group button {
             padding: 10px 20px;
             background-color: #333;
             color: #fff;
@@ -77,7 +108,7 @@
             cursor: pointer;
             border-radius: 5px;
         }
-        .button:hover {
+        .form-group button:hover {
             background-color: #555;
         }
     </style>
@@ -97,7 +128,36 @@
     </nav>
     <div class="content">
         <p>Bienvenido, manager</p>
-        <button class="button" onclick="showAlert()">Click me</button>
+    </div>
+    <div class="employee-list">
+        <h2>Empleados a Cargo</h2>
+        <ul id="employee-list">
+            <!-- Lista de empleados se llenará aquí -->
+        </ul>
+    </div>
+    <div class="content">
+        <h2>Crear Nuevo Empleado</h2>
+        <form id="create-employee-form">
+            <div class="form-group">
+                <label for="username">Usuario:</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Contraseña:</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            <div class="form-group">
+                <label for="balance">Saldo:</label>
+                <input type="number" id="balance" name="balance" required>
+            </div>
+            <div class="form-group">
+                <label for="vacation_days">Días de Vacaciones:</label>
+                <input type="number" id="vacation_days" name="vacation_days" required>
+            </div>
+            <div class="form-group">
+                <button type="submit">Crear Empleado</button>
+            </div>
+        </form>
     </div>
     <script>
         function toggleMenu() {
@@ -109,9 +169,52 @@
             }
         }
 
-        function showAlert() {
-            alert('Button clicked!');
+        async function fetchEmployees() {
+            const managerId = 1; // Reemplaza con el ID del manager actual
+            const response = await fetch(`/manager/${managerId}/employees`);
+            const employees = await response.json();
+            const employeeList = document.getElementById('employee-list');
+            employeeList.innerHTML = '';
+            employees.forEach(employee => {
+                const li = document.createElement('li');
+                li.textContent = employee.username;
+                employeeList.appendChild(li);
+            });
         }
+
+        async function createEmployee(event) {
+            event.preventDefault();
+            const managerId = 1; // Reemplaza con el ID del manager actual
+            const form = document.getElementById('create-employee-form');
+            const formData = new FormData(form);
+            const data = {
+                username: formData.get('username'),
+                password: formData.get('password'),
+                balance: formData.get('balance'),
+                vacation_days: formData.get('vacation_days')
+            };
+
+            const response = await fetch(`/manager/${managerId}/employees`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+
+            if (response.ok) {
+                fetchEmployees(); // Actualiza la lista de empleados
+                form.reset(); // Limpia el formulario
+            } else {
+                alert('Error al crear el empleado');
+            }
+        }
+
+        // Llamar a la función para obtener y mostrar los empleados al cargar la página
+        window.onload = fetchEmployees;
+
+        // Añadir el evento submit al formulario
+        document.getElementById('create-employee-form').addEventListener('submit', createEmployee);
     </script>
 </body>
 </html>
