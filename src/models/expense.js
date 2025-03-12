@@ -5,37 +5,29 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const sequelize_1 = require("sequelize");
 const database_1 = __importDefault(require("../database"));
-class User extends sequelize_1.Model {
+class Expense extends sequelize_1.Model {
 }
-User.init({
+Expense.init({
     id: {
         type: sequelize_1.DataTypes.INTEGER,
         autoIncrement: true,
         primaryKey: true,
     },
-    username: {
-        type: new sequelize_1.DataTypes.STRING(128),
+    user_id: {
+        type: sequelize_1.DataTypes.INTEGER,
         allowNull: false,
     },
-    password: {
-        type: new sequelize_1.DataTypes.STRING(128),
+    amount: {
+        type: sequelize_1.DataTypes.DECIMAL(10, 2),
         allowNull: false,
     },
-    role: {
-        type: new sequelize_1.DataTypes.STRING(128),
-        allowNull: false,
-    },
-    trip_start_date: {
+    date: {
         type: sequelize_1.DataTypes.DATEONLY,
-        allowNull: true,
-    },
-    trip_end_date: {
-        type: sequelize_1.DataTypes.DATEONLY,
-        allowNull: true,
+        allowNull: false,
     },
 }, {
-    tableName: 'users',
+    tableName: 'expenses',
     sequelize: database_1.default,
     timestamps: false,
 });
-exports.default = User;
+exports.default = Expense;

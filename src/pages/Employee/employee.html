@@ -69,7 +69,38 @@
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             text-align: center;
         }
-        .button {
+        .expense-list {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: left;
+        }
+        .expense-list h2 {
+            text-align: center;
+        }
+        .expense-list ul {
+            list-style: none;
+            padding: 0;
+        }
+        .expense-list ul li {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+        .form-group button {
             padding: 10px 20px;
             background-color: #333;
             color: #fff;
@@ -77,7 +108,7 @@
             cursor: pointer;
             border-radius: 5px;
         }
-        .button:hover {
+        .form-group button:hover {
             background-color: #555;
         }
     </style>
@@ -97,7 +128,30 @@
     </nav>
     <div class="content">
         <p>Bienvenido, empleado</p>
-        <button class="button" onclick="showAlert()">Click me</button>
+        <p id="trip-dates"></p>
+        <p id="balance"></p>
+    </div>
+    <div class="expense-list">
+        <h2>Gastos Registrados</h2>
+        <ul id="expense-list">
+            <!-- Lista de gastos se llenará aquí -->
+        </ul>
+    </div>
+    <div class="content">
+        <h2>Registrar Nuevo Gasto</h2>
+        <form id="register-expense-form">
+            <div class="form-group">
+                <label for="amount">Monto:</label>
+                <input type="number" id="amount" name="amount" required>
+            </div>
+            <div class="form-group">
+                <label for="date">Fecha:</label>
+                <input type="date" id="date" name="date" required>
+            </div>
+            <div class="form-group">
+                <button type="submit">Registrar Gasto</button>
+            </div>
+        </form>
     </div>
     <script>
         function toggleMenu() {
@@ -109,9 +163,71 @@
             }
         }
 
-        function showAlert() {
-            alert('Button clicked!');
+        async function fetchExpenses() {
+            const userId = 1; // Reemplaza con el ID del empleado actual
+            const response = await fetch(`/employee/${userId}/expenses`);
+            const expenses = await response.json();
+            const expenseList = document.getElementById('expense-list');
+            expenseList.innerHTML = '';
+            let totalAmount = 0;
+            expenses.forEach(expense => {
+                const li = document.createElement('li');
+                li.textContent = `${expense.date}: $${expense.amount}`;
+                expenseList.appendChild(li);
+                totalAmount += parseFloat(expense.amount);
+            });
+            const daysOut = expenses.length;
+            const averagePerDay = totalAmount / daysOut;
+            const summary = document.createElement('li');
+            summary.textContent = `Total Gastado: $${totalAmount.toFixed(2)}, Promedio por Día: $${averagePerDay.toFixed(2)}, Días Fuera: ${daysOut}`;
+            expenseList.appendChild(summary);
         }
+
+        async function fetchTripDates() {
+            const userId = 1; // Reemplaza con el ID del empleado actual
+            const response = await fetch(`/employee/${userId}`);
+            const user = await response.json();
+            const tripDates = document.getElementById('trip-dates');
+            tripDates.textContent = `Fecha de Inicio: ${user.trip_start_date}, Fecha de Fin: ${user.trip_end_date}`;
+            const balance = document.getElementById('balance');
+            balance.textContent = `Saldo: $${user.balance.toFixed(2)}`;
+        }
+
+        async function registerExpense(event) {
+            event.preventDefault();
+            const userId = 1; // Reemplaza con el ID del empleado actual
+            const form = document.getElementById('register-expense-form');
+            const formData = new FormData(form);
+            const data = {
+                amount: formData.get('amount'),
+                date: formData.get('date')
+            };
+
+            const response = await fetch(`/employee/${userId}/expenses`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+
+            if (response.ok) {
+                fetchExpenses(); // Actualiza la lista de gastos
+                fetchTripDates(); // Actualiza el saldo
+                form.reset(); // Limpia el formulario
+            } else {
+                alert('Error al registrar el gasto');
+            }
+        }
+
+        // Llamar a las funciones para obtener y mostrar los gastos y las fechas del viaje al cargar la página
+        window.onload = () => {
+            fetchExpenses();
+            fetchTripDates();
+        };
+
+        // Añadir el evento submit al formulario
+        document.getElementById('register-expense-form').addEventListener('submit', registerExpense);
     </script>
 </body>
 </html>
