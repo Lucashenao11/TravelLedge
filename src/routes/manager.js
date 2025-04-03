@@ -13,8 +13,25 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
+const crypto_1 = __importDefault(require("crypto"));
+const bcrypt_1 = __importDefault(require("bcrypt"));
 const user_1 = __importDefault(require("../models/user"));
+const config_1 = require("../config/config");
 const router = (0, express_1.Router)();
+class Validation {
+    static username(username) {
+        if (typeof username !== 'string')
+            throw new Error('username must be a string');
+        if (username.length < 3)
+            throw new Error('username must be at least 3 characters long');
+    }
+    static password(password) {
+        if (typeof password !== 'string')
+            throw new Error('password must be a string');
+        if (password.length < 6)
+            throw new Error('password must be at least 6 characters long');
+    }
+}
 router.get('/manager/:id/employees', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const managerId = req.params.id;
     try {
@@ -30,9 +47,16 @@ router.post('/manager/:id/employees', (req, res) => __awaiter(void 0, void 0, vo
     const managerId = req.params.id;
     const { username, password, balance, vacation_days } = req.body;
     try {
+        Validation.username(username);
+        Validation.password(password);
+        const existingUser = yield user_1.default.findOne({ where: { username } });
+        if (existingUser)
+            throw new Error('username already exists');
+        const hashedPassword = yield bcrypt_1.default.hash(password, config_1.SALT_ROUNDS);
         const newUser = yield user_1.default.create({
+            _id: crypto_1.default.randomUUID(),
             username,
-            password,
+            password: hashedPassword,
             role: 'employee',
             manager_id: managerId,
             balance,
@@ -42,7 +66,7 @@ router.post('/manager/:id/employees', (req, res) => __awaiter(void 0, void 0, vo
     }
     catch (err) {
         console.error(err.message);
-        res.status(500).send('Server Error');
+        res.status(400).send(err.message);
     }
 }));
 exports.default = router;
