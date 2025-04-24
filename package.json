@@ -25,6 +25,9 @@
     "sequelize": "^6.37.5"
   },
   "devDependencies": {
-    "@types/express": "^5.0.0"
+    "@types/cors": "^2.8.17",
+    "@types/estree": "^1.0.7",
+    "@types/express": "^5.0.0",
+    "@types/jasmine": "^5.1.7"
   }
 }

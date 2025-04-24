@@ -1,0 +1,26 @@
+<div class="container mx-auto p-4">
+    <h1 class="text-3xl font-bold mb-6">Mis Viajes</h1>
+    
+    <div *ngIf="trips.length > 0" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div *ngFor="let trip of trips" class="border rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow">
+        <img src="assets/trip-placeholder.jpg" alt="{{ trip.name }}" class="w-full h-48 object-cover">
+        <div class="p-4">
+          <h2 class="text-xl font-semibold">{{ trip.name }}</h2>
+          <p class="text-gray-600">{{ trip.destination }}</p>
+          <div class="mt-4 flex justify-between items-center">
+            <span class="text-sm text-gray-500">{{ trip.startDate | date }} - {{ trip.endDate | date }}</span>
+            <button (click)="viewDetails(trip.id)" class="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600">
+              Ver
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <div *ngIf="trips.length === 0" class="text-center py-10">
+      <p class="text-gray-500">No tienes viajes registrados</p>
+      <button routerLink="/trips/new" class="mt-4 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600">
+        Crear mi primer viaje
+      </button>
+    </div>
+  </div>
